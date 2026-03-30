@@ -13,7 +13,7 @@
 
 ## ⚙️ Guía de Sincronización con el Template
 
-Para poder recibir **actualizaciones** de enunciados, correcciones de tests o cambios en el entorno de evaluación (GitHub Actions), seguí estos pasos para mantener tu repositorio vinculado al template original.
+Para poder recibir actualizaciones de enunciados, correcciones de tests o cambios en el entorno de evaluación (GitHub Actions), seguí estos pasos para mantener tu repositorio vinculado al template original.
 
 ---
 
@@ -35,9 +35,9 @@ Listo, los repositorios ya deberían estar vinculados correctamente.
 
 ---
 
-### 🔹 2. Para recibir actualizaciones de la cátedra (Previamente avisaremos por el canal #avisos del Discord)
+### 🔹 2. Para recibir las actualizaciones de la cátedra (Previo aviso por el canal #avisos del Discord)
 
-Cada vez que se anuncien cambios o correcciones en el TP, ejecutá estos comandos:
+Para actualizar, ejecutá estos comandos:
 
 ```bash
 # Traer los nuevos cambios
@@ -47,7 +47,7 @@ git fetch template
 git merge template/main
 ```
 📌 **Nota:**  
-A la hora de recibir actualizaciones, no se pone la flag "--allow-unrelated-histories" en el merge.
+A la hora de recibir actualizaciones, NO se pone la flag "--allow-unrelated-histories" en el merge.
 
 ---
 
@@ -55,5 +55,5 @@ A la hora de recibir actualizaciones, no se pone la flag "--allow-unrelated-hist
 
 **ARCHIVOS PROTEGIDOS:**
 
-> Los archivos de las carpetas "/catedra" y ".github/" están **PROTEGIDOS**, es decir, **NO PUEDEN MODIFICARLOS**.
-Modificar estos archivos implica **desaprobar inmediatamente la instancia de entrega del TPA**.
+> Los archivos de las carpetas "/catedra" y ".github/" están PROTEGIDOS, es decir, **NO PUEDEN MODIFICARLOS**.
+Modificar estos archivos implica desaprobar inmediatamente la instancia de entrega del TPA.
