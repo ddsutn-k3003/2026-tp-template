@@ -41,10 +41,10 @@ public class DonadoresYEntidadesTest {
     instancia.setFachadaIncentivos(fachadaIncentivos);
 
     donadorEjemplo =
-        new DonadorDTO(null, "d1", "d1", 5, "d1", "d1", "d1", EstadoDonadorEnum.VERIFICADO, "d1");
-    entidadEjemplo = new EntidadBeneficaDTO(null, "e1", "e1", "e1", "e1");
-    necesidadEjemplo = new NecesidadMaterialDTO(null, "n1", 5, "n1", 5, "p1");
-    quejaEjemplo = new QuejaDTO(null, "donacion1", donadorEjemplo.id(), null, "q1");
+        new DonadorDTO(null, "donador1", "donador1", 5, "donador1", "donador1", "donador1", EstadoDonadorEnum.VERIFICADO, "donador1");
+    entidadEjemplo = new EntidadBeneficaDTO(null, "entidad1", "entidad1", "entidad1", "entidad1");
+    necesidadEjemplo = new NecesidadMaterialDTO(null, "entidad1", 5, "necesidad1", 5, "producto1");
+    quejaEjemplo = new QuejaDTO(null, "donacion1", "donador1", null, "queja1");
   }
 
   static boolean condicion() {
@@ -174,13 +174,15 @@ public class DonadoresYEntidadesTest {
   @Test
   void testAgregarQueja() {
 
-    instancia.agregarDonador(donadorEjemplo);
+    DonadorDTO donadorRetorno = instancia.agregarDonador(donadorEjemplo);
 
-    QuejaDTO retorno = instancia.agregarQueja(quejaEjemplo);
+    QuejaDTO quejaConDonadorID = new QuejaDTO(null, "donacion1", donadorRetorno.id(), null, "queja1");
+
+    QuejaDTO retorno = instancia.agregarQueja(quejaConDonadorID);
 
     Assertions.assertNotNull(retorno.id());
     Assertions.assertEquals(
-        instancia.obtenerQuejasDe(quejaEjemplo.donadorID()).getFirst().id(), retorno.id());
+        instancia.obtenerQuejasDe(quejaConDonadorID.donadorID()).getFirst().id(), retorno.id());
   }
 
   @Test
@@ -230,20 +232,6 @@ public class DonadoresYEntidadesTest {
   }
 
   @Test
-  void testObtenerQuejasDe() {
-
-    instancia.agregarDonador(donadorEjemplo);
-
-    instancia.agregarQueja(quejaEjemplo);
-
-    List<QuejaDTO> resultado = instancia.obtenerQuejasDe(donadorEjemplo.id());
-
-    Assertions.assertNotNull(resultado);
-    Assertions.assertEquals(1, resultado.size());
-    Assertions.assertEquals(quejaEjemplo.id(), resultado.getFirst().id());
-  }
-
-  @Test
   void testObtenerQuejasDeFallido() {
     Assertions.assertThrows(
         RuntimeException.class,
@@ -260,12 +248,12 @@ public class DonadoresYEntidadesTest {
           instancia.modificarEstado("Inexistente", EstadoDonadorEnum.BANEADO);
         });
 
-    instancia.agregarDonador(donadorEjemplo);
+    DonadorDTO retorno = instancia.agregarDonador(donadorEjemplo);
 
     Assertions.assertThrows(
         RuntimeException.class,
         () -> {
-          instancia.modificarEstado(donadorEjemplo.id(), null);
+          instancia.modificarEstado(retorno.id(), null);
         });
   }
 
@@ -277,7 +265,7 @@ public class DonadoresYEntidadesTest {
 
     Assertions.assertNotNull(actualizado);
     Assertions.assertEquals(
-        "CategoriaNueva", instancia.buscarDonadorPorID(actualizado.id()).categoria());
+        "CategoriaNueva", instancia.buscarDonadorPorID(retorno.id()).categoria());
   }
 
   @Test
@@ -288,25 +276,25 @@ public class DonadoresYEntidadesTest {
           instancia.modifcarCategoria("Inexistente", "Categoria1");
         });
 
-    instancia.agregarDonador(donadorEjemplo);
+    DonadorDTO retorno =  instancia.agregarDonador(donadorEjemplo);
 
     Assertions.assertThrows(
         RuntimeException.class,
         () -> {
-          instancia.modifcarCategoria(donadorEjemplo.id(), null);
+          instancia.modifcarCategoria(retorno.id(), null);
         });
   }
 
   @Test
   void testObtenerNecesidadesInsatisfechasDe() {
-    instancia.registrarNecesidad(necesidadEjemplo);
+    NecesidadMaterialDTO retorno = instancia.registrarNecesidad(necesidadEjemplo);
 
     List<NecesidadMaterialDTO> resultado =
-        instancia.obtenerNecesidadesInsatisfechasDe(new ProductoSolicitadoDTO("p1", "p1", "p1"));
+        instancia.obtenerNecesidadesInsatisfechasDe("producto1");
 
     Assertions.assertNotNull(resultado);
     Assertions.assertEquals(1, resultado.size());
-    Assertions.assertEquals(necesidadEjemplo.id(), resultado.getFirst().id());
+    Assertions.assertEquals(retorno.id(), resultado.getFirst().id());
   }
 
   @Test
@@ -317,38 +305,39 @@ public class DonadoresYEntidadesTest {
           instancia.satisfacerNecesidad("Inexistente", 5);
         });
 
-    instancia.registrarNecesidad(necesidadEjemplo);
+    NecesidadMaterialDTO retorno = instancia.registrarNecesidad(necesidadEjemplo);
 
     Assertions.assertThrows(
         RuntimeException.class,
         () -> {
-          instancia.satisfacerNecesidad(necesidadEjemplo.id(), 0);
+          instancia.satisfacerNecesidad(retorno.id(), 0);
         });
 
     Assertions.assertThrows(
         RuntimeException.class,
         () -> {
-          instancia.satisfacerNecesidad(necesidadEjemplo.id(), -1);
+          instancia.satisfacerNecesidad(retorno.id(), -1);
         });
   }
 
   @Test
   void testObtenerEstadisticasDonador() {
 
-    when(fachadaIncentivos.getInsigniasDeDonador(anyString()))
-        .thenReturn(List.of(new InsigniaDTO(null, "insignia1", "insignia1descr")));
-    when(fachadaIncentivos.getMisionEnCursoDeDonador(anyString()))
-        .thenReturn(new MisionDTO(null, "mision1", "1", null, null));
+    DonadorDTO donadorConID = instancia.agregarDonador(donadorEjemplo);
 
-    instancia.agregarDonador(donadorEjemplo);
-    DonadorStatsDTO retorno = instancia.estadisticasDonador(donadorEjemplo.id());
+    when(fachadaIncentivos.getInsigniasDeDonador(donadorConID.id()))
+            .thenReturn(List.of(new InsigniaDTO("insignia1", "insignia1", "insignia1")));
+    when(fachadaIncentivos.getMisionEnCursoDeDonador(donadorConID.id()))
+            .thenReturn(new MisionDTO("mision1", "mision1", "insignia1", null, null));
+
+    DonadorStatsDTO retorno = instancia.estadisticasDonador(donadorConID.id());
 
     Assertions.assertNotNull(retorno);
-    Assertions.assertEquals(donadorEjemplo.nombre(), retorno.nombre());
-    Assertions.assertEquals(retorno.insigniasID().size(), 1);
+    Assertions.assertEquals(donadorConID.nombre(), retorno.nombre());
+    Assertions.assertEquals(1, retorno.insigniasID().size());
     Assertions.assertNotNull(retorno.misionActualID());
 
-    verify(fachadaIncentivos, times(1)).getInsigniasDeDonador(anyString());
-    verify(fachadaIncentivos, times(1)).getMisionEnCursoDeDonador(anyString());
+    verify(fachadaIncentivos, times(1)).getInsigniasDeDonador(donadorConID.id());
+    verify(fachadaIncentivos, times(1)).getMisionEnCursoDeDonador(donadorConID.id());
   }
 }

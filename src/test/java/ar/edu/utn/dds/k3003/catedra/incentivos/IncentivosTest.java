@@ -41,10 +41,10 @@ public class IncentivosTest {
 
     instancia.setFachadaDonadoresYEntidades(fachadaDonadoresYEntidades);
 
-    insigniaEjemplo = new InsigniaDTO(null, "insignia1", "insignia1descr");
-    misionEjemplo = new MisionDTO(null, "mision1", "1", null, null);
+    insigniaEjemplo = new InsigniaDTO(null, "insignia1", "descripcion1");
+    misionEjemplo = new MisionDTO(null, "mision1", "insignia1", null, null);
     donadorEjemplo =
-        new DonadorDTO("d1", "d1", "d1", 5, "d1", "d1", "d1", EstadoDonadorEnum.VERIFICADO, "d1");
+        new DonadorDTO("donador1", "donador1", "donador1", 5, "donador1", "donador1", "donador1", EstadoDonadorEnum.VERIFICADO, "donador1");
   }
 
   static boolean condicion() {
@@ -144,16 +144,23 @@ public class IncentivosTest {
   }
 
   @Test
-  void testGetInsigniasDeDonador() {
+  void testGetInsigniasDeDonadorInexistente() {
+    when(fachadaDonadoresYEntidades.buscarDonadorPorID("Inexistente"))
+            .thenThrow(new DonadorNoEncontradoException("Donador Inexistente"));
+
     Assertions.assertThrows(
         RuntimeException.class,
         () -> {
           instancia.getInsigniasDeDonador("Inexistente");
         });
+
+    verify(fachadaDonadoresYEntidades, times(1)).buscarDonadorPorID("Inexistente");
   }
 
   @Test
-  void testGetMisionEnCursoDeDonador() {
+  void testAsignarMisionEnCursoDeDonador() {
+    when(fachadaDonadoresYEntidades.buscarDonadorPorID(donadorEjemplo.id()))
+            .thenReturn(donadorEjemplo);
 
     MisionDTO misionRetorno = instancia.agregarMision(misionEjemplo);
     instancia.asignarMisionADonador(donadorEjemplo.id(), misionRetorno);
@@ -162,6 +169,8 @@ public class IncentivosTest {
 
     Assertions.assertNotNull(buscada);
     Assertions.assertEquals(buscada.id(), misionRetorno.id());
+
+    verify(fachadaDonadoresYEntidades, times(1)).buscarDonadorPorID(donadorEjemplo.id());
   }
 
   @Test
@@ -183,6 +192,7 @@ public class IncentivosTest {
         () -> {
           instancia.asignarMisionADonador("Inexistente", misionEjemplo);
         });
+
     verify(fachadaDonadoresYEntidades, times(1)).buscarDonadorPorID("Inexistente");
   }
 
@@ -190,11 +200,13 @@ public class IncentivosTest {
   void testGetMisionEnCursoDeDonadorFallido() {
     when(fachadaDonadoresYEntidades.buscarDonadorPorID("Inexistente"))
         .thenThrow(new DonadorNoEncontradoException("Donador Inexistente"));
+
     Assertions.assertThrows(
         RuntimeException.class,
         () -> {
           instancia.getMisionEnCursoDeDonador("Inexistente");
         });
+
     verify(fachadaDonadoresYEntidades, times(1)).buscarDonadorPorID("Inexistente");
   }
 }

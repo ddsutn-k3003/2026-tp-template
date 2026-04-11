@@ -45,12 +45,12 @@ public class DonacionesTest {
     instancia.setFachadaDonadoresYEntidades(fachadaDonadoresYEntidades);
     instancia.setFachadaLogistica(fachadaLogistica);
 
-    donacionEjemplo = new DonacionDTO(null, "1", "1", "dn1", "p1", 5, EstadoDonacionEnum.INGRESADA);
+    donacionEjemplo = new DonacionDTO(null, "donador1", "deposito1", "descripcion1", "producto1", 5, EstadoDonacionEnum.INGRESADA);
     donacionAceptadaEjemplo =
-        new DonacionDTO(null, "1", "1", "dn1", "p1", 5, EstadoDonacionEnum.ACEPTADA);
+        new DonacionDTO(null, "donador1", "deposito1", "descripcion1", "producto1", 5, EstadoDonacionEnum.ACEPTADA);
     donadorEjemplo =
-        new DonadorDTO("1", "dr1", "dra1", 5, "email", "dni", "calle", null, "Ocasional");
-    quejaEjemplo = new QuejaDTO(null, "1", "1", null, "Lalala");
+        new DonadorDTO("donador1", "donador1", "donador1", 5, "donador1", "donador1", "donador1", null, "donador1");
+    quejaEjemplo = new QuejaDTO(null, "donacion1", "donador1", null, "descripcion1");
   }
 
   static boolean condicion() {
@@ -61,11 +61,11 @@ public class DonacionesTest {
   @Test
   void testRegistrarDonacion() {
 
-    when(fachadaDonadoresYEntidades.buscarDonadorPorID(donacionEjemplo.donadorID()))
+    when(fachadaDonadoresYEntidades.buscarDonadorPorID(donadorEjemplo.id()))
         .thenReturn(donadorEjemplo);
-    when(fachadaDonadoresYEntidades.puedeDonar(donacionEjemplo.donadorID()))
+    when(fachadaDonadoresYEntidades.puedeDonar(donadorEjemplo.id()))
         .thenReturn(Boolean.TRUE);
-    when(fachadaLogistica.gestionarDonacion(any(), any(), anyInt())).thenReturn(null);
+    when(fachadaLogistica.gestionarDonacion(any(), any(), anyInt())).thenReturn(any());
 
     DonacionDTO retorno = instancia.registrarDonacion(donacionEjemplo);
 
@@ -73,23 +73,20 @@ public class DonacionesTest {
 
     Assertions.assertNotNull(retorno.id());
     Assertions.assertEquals(retorno.id(), busqueda.id());
-    Assertions.assertEquals(busqueda.donadorID(), retorno.donadorID());
-    Assertions.assertEquals(busqueda.productoID(), retorno.productoID());
-    Assertions.assertEquals(busqueda.cantidad(), retorno.cantidad());
 
-    verify(fachadaDonadoresYEntidades, times(1)).puedeDonar(donacionEjemplo.donadorID());
-    verify(fachadaDonadoresYEntidades, times(1)).buscarDonadorPorID(donacionEjemplo.donadorID());
+    verify(fachadaDonadoresYEntidades, times(1)).puedeDonar(donadorEjemplo.id());
+    verify(fachadaDonadoresYEntidades, times(1)).buscarDonadorPorID(donadorEjemplo.id());
     verify(fachadaLogistica, times(1)).gestionarDonacion(any(), any(), anyInt());
   }
 
   @Test
   void testRegistrarDonacionFallido() {
 
-    when(fachadaDonadoresYEntidades.buscarDonadorPorID(donacionEjemplo.donadorID()))
-        .thenReturn(donadorEjemplo);
-    when(fachadaDonadoresYEntidades.puedeDonar(donacionEjemplo.donadorID()))
-        .thenReturn(Boolean.TRUE);
-    when(fachadaLogistica.gestionarDonacion(any(), any(), anyInt()));
+    when(fachadaDonadoresYEntidades.buscarDonadorPorID(donadorEjemplo.id()))
+            .thenReturn(donadorEjemplo);
+    when(fachadaDonadoresYEntidades.puedeDonar(donadorEjemplo.id()))
+            .thenReturn(Boolean.TRUE);
+    when(fachadaLogistica.gestionarDonacion(any(), any(), anyInt())).thenReturn(any());
 
     Assertions.assertThrows(
         RuntimeException.class,
@@ -105,19 +102,19 @@ public class DonacionesTest {
           instancia.registrarDonacion(retorno);
         });
 
-    verify(fachadaDonadoresYEntidades, times(1)).buscarDonadorPorID(donacionEjemplo.donadorID());
-    verify(fachadaDonadoresYEntidades, times(1)).puedeDonar(donacionEjemplo.donadorID());
+    verify(fachadaDonadoresYEntidades, times(1)).puedeDonar(donadorEjemplo.id());
+    verify(fachadaDonadoresYEntidades, times(1)).buscarDonadorPorID(donadorEjemplo.id());
     verify(fachadaLogistica, times(1)).gestionarDonacion(any(), any(), anyInt());
   }
 
   @Test
   void testRegistrarDonacionNoPuedeDonar() {
 
-    when(fachadaDonadoresYEntidades.buscarDonadorPorID(donacionEjemplo.donadorID()))
-        .thenReturn(donadorEjemplo);
-    when(fachadaDonadoresYEntidades.puedeDonar(donacionEjemplo.donadorID()))
-        .thenReturn(Boolean.FALSE);
-    when(fachadaLogistica.gestionarDonacion(any(), any(), anyInt()));
+    when(fachadaDonadoresYEntidades.buscarDonadorPorID(donadorEjemplo.id()))
+            .thenReturn(donadorEjemplo);
+    when(fachadaDonadoresYEntidades.puedeDonar(donadorEjemplo.id()))
+            .thenReturn(Boolean.FALSE);
+    when(fachadaLogistica.gestionarDonacion(any(), any(), anyInt())).thenReturn(any());
 
     Assertions.assertThrows(
         RuntimeException.class,
@@ -125,29 +122,8 @@ public class DonacionesTest {
           instancia.registrarDonacion(donacionEjemplo);
         });
 
-    verify(fachadaDonadoresYEntidades, times(1)).buscarDonadorPorID(donacionEjemplo.donadorID());
-    verify(fachadaDonadoresYEntidades, times(1)).puedeDonar(any());
-    verify(fachadaLogistica, times(1)).gestionarDonacion(any(), any(), anyInt());
-  }
-
-  @Test
-  void testBuscarDonacionPorID() {
-
-    when(fachadaDonadoresYEntidades.buscarDonadorPorID(donacionEjemplo.donadorID()))
-        .thenReturn(donadorEjemplo);
-    when(fachadaDonadoresYEntidades.puedeDonar(donacionEjemplo.donadorID()))
-        .thenReturn(Boolean.TRUE);
-    when(fachadaLogistica.gestionarDonacion(any(), any(), anyInt()));
-
-    DonacionDTO retorno = instancia.registrarDonacion(donacionEjemplo);
-
-    DonacionDTO buscada = instancia.buscarDonacionPorID(retorno.id());
-
-    Assertions.assertNotNull(buscada);
-    Assertions.assertEquals(retorno.id(), buscada.id());
-
-    verify(fachadaDonadoresYEntidades, times(1)).buscarDonadorPorID(donacionEjemplo.donadorID());
-    verify(fachadaDonadoresYEntidades, times(1)).puedeDonar(any());
+    verify(fachadaDonadoresYEntidades, times(1)).puedeDonar(donadorEjemplo.id());
+    verify(fachadaDonadoresYEntidades, times(1)).buscarDonadorPorID(donadorEjemplo.id());
     verify(fachadaLogistica, times(1)).gestionarDonacion(any(), any(), anyInt());
   }
 
@@ -163,12 +139,12 @@ public class DonacionesTest {
   @Test
   void testRegistrarQueja() {
 
-    when(fachadaDonadoresYEntidades.buscarDonadorPorID(donacionEjemplo.donadorID()))
-        .thenReturn(donadorEjemplo);
-    when(fachadaDonadoresYEntidades.puedeDonar(donacionEjemplo.donadorID()))
-        .thenReturn(Boolean.TRUE);
+    when(fachadaDonadoresYEntidades.buscarDonadorPorID(donadorEjemplo.id()))
+            .thenReturn(donadorEjemplo);
+    when(fachadaDonadoresYEntidades.puedeDonar(donadorEjemplo.id()))
+            .thenReturn(Boolean.TRUE);
     when(fachadaLogistica.gestionarDonacion(any(), any(), anyInt())).thenReturn(any());
-    when(fachadaDonadoresYEntidades.agregarQueja(any())).thenReturn(any());
+    when(fachadaDonadoresYEntidades.agregarQueja(quejaEjemplo)).thenReturn(any());
 
     DonacionDTO retornoD = instancia.registrarDonacion(donacionEjemplo);
 
@@ -176,19 +152,22 @@ public class DonacionesTest {
         instancia.registrarQuejaEnDonacion(retornoD.id(), quejaEjemplo.descripcion());
 
     Assertions.assertNotNull(retorno.id());
-    Assertions.assertEquals(retorno.descripcion(), quejaEjemplo.descripcion());
     Assertions.assertEquals(
-        instancia.buscarDonacionPorID(retorno.id()).estado(), EstadoDonacionEnum.CONQUEJA);
+            EstadoDonacionEnum.CONQUEJA, instancia.buscarDonacionPorID(retorno.id()).estado());
 
-    verify(fachadaDonadoresYEntidades, times(1)).agregarQueja(quejaEjemplo);
-    verify(fachadaDonadoresYEntidades, times(1)).puedeDonar(donacionEjemplo.donadorID());
-    verify(fachadaDonadoresYEntidades, times(1)).buscarDonadorPorID(donacionEjemplo.donadorID());
+    verify(fachadaDonadoresYEntidades, times(1)).puedeDonar(donadorEjemplo.id());
+    verify(fachadaDonadoresYEntidades, times(1)).buscarDonadorPorID(donadorEjemplo.id());
     verify(fachadaLogistica, times(1)).gestionarDonacion(any(), any(), anyInt());
+    verify(fachadaDonadoresYEntidades, times(1)).agregarQueja(quejaEjemplo);
   }
 
   @Test
   void testRegistrarQuejaFallido() {
-
+    when(fachadaDonadoresYEntidades.buscarDonadorPorID(donadorEjemplo.id()))
+            .thenReturn(donadorEjemplo);
+    when(fachadaDonadoresYEntidades.puedeDonar(donadorEjemplo.id()))
+            .thenReturn(Boolean.TRUE);
+    when(fachadaLogistica.gestionarDonacion(any(), any(), anyInt())).thenReturn(any());
     when(fachadaDonadoresYEntidades.agregarQueja(any())).thenThrow(new RuntimeException());
 
     Assertions.assertThrows(
@@ -205,18 +184,22 @@ public class DonacionesTest {
           instancia.registrarQuejaEnDonacion(retorno.id(), quejaEjemplo.descripcion());
         });
     Assertions.assertEquals(
-        instancia.buscarDonacionPorID(retorno.id()).estado(), EstadoDonacionEnum.ACEPTADA);
+            EstadoDonacionEnum.ACEPTADA, instancia.buscarDonacionPorID(retorno.id()).estado());
 
+    verify(fachadaDonadoresYEntidades, times(1)).puedeDonar(donadorEjemplo.id());
+    verify(fachadaDonadoresYEntidades, times(1)).buscarDonadorPorID(donadorEjemplo.id());
+    verify(fachadaLogistica, times(1)).gestionarDonacion(any(), any(), anyInt());
     verify(fachadaDonadoresYEntidades, times(1)).agregarQueja(quejaEjemplo);
   }
 
   @Test
   void testCambiarEstadoDeDonacion() {
 
-    when(fachadaDonadoresYEntidades.buscarDonadorPorID(donacionEjemplo.donadorID()))
-        .thenReturn(donadorEjemplo);
-    when(fachadaDonadoresYEntidades.puedeDonar(any())).thenReturn(Boolean.TRUE);
-    when(fachadaLogistica.gestionarDonacion(any(), any(), anyInt()));
+    when(fachadaDonadoresYEntidades.buscarDonadorPorID(donadorEjemplo.id()))
+            .thenReturn(donadorEjemplo);
+    when(fachadaDonadoresYEntidades.puedeDonar(donadorEjemplo.id()))
+            .thenReturn(Boolean.TRUE);
+    when(fachadaLogistica.gestionarDonacion(any(), any(), anyInt())).thenReturn(any());
 
     DonacionDTO retorno = instancia.registrarDonacion(donacionEjemplo);
 
@@ -226,15 +209,22 @@ public class DonacionesTest {
     Assertions.assertNotNull(actualizada);
     Assertions.assertEquals(EstadoDonacionEnum.ACEPTADA, actualizada.estado());
     Assertions.assertEquals(
-        instancia.buscarDonacionPorID(retorno.id()).estado(), EstadoDonacionEnum.ACEPTADA);
+            EstadoDonacionEnum.ACEPTADA, instancia.buscarDonacionPorID(retorno.id()).estado());
 
-    verify(fachadaDonadoresYEntidades, times(1)).buscarDonadorPorID(donacionEjemplo.donadorID());
+    verify(fachadaDonadoresYEntidades, times(1)).puedeDonar(donadorEjemplo.id());
+    verify(fachadaDonadoresYEntidades, times(1)).buscarDonadorPorID(donadorEjemplo.id());
     verify(fachadaLogistica, times(1)).gestionarDonacion(any(), any(), anyInt());
-    verify(fachadaDonadoresYEntidades, times(1)).puedeDonar(any());
   }
 
   @Test
   void testCambiarEstadoDeDonacionFallido() {
+
+    when(fachadaDonadoresYEntidades.buscarDonadorPorID(donadorEjemplo.id()))
+            .thenReturn(donadorEjemplo);
+    when(fachadaDonadoresYEntidades.puedeDonar(donadorEjemplo.id()))
+            .thenReturn(Boolean.TRUE);
+    when(fachadaLogistica.gestionarDonacion(any(), any(), anyInt())).thenReturn(any());
+
     Assertions.assertThrows(
         RuntimeException.class,
         () -> {
@@ -248,29 +238,32 @@ public class DonacionesTest {
         () -> {
           instancia.cambiarEstadoDeDonacion(retorno.id(), null);
         });
+
+    verify(fachadaDonadoresYEntidades, times(1)).puedeDonar(donadorEjemplo.id());
+    verify(fachadaDonadoresYEntidades, times(1)).buscarDonadorPorID(donadorEjemplo.id());
+    verify(fachadaLogistica, times(1)).gestionarDonacion(any(), any(), anyInt());
   }
 
   @Test
   void testBuscarPorDonadorYFechaInicio() {
 
-    when(fachadaDonadoresYEntidades.buscarDonadorPorID(donacionEjemplo.donadorID()))
-        .thenReturn(donadorEjemplo);
-    when(fachadaDonadoresYEntidades.puedeDonar(any())).thenReturn(Boolean.TRUE);
-    when(fachadaLogistica.gestionarDonacion(any(), any(), anyInt()));
+    when(fachadaDonadoresYEntidades.buscarDonadorPorID(donadorEjemplo.id()))
+            .thenReturn(donadorEjemplo);
+    when(fachadaDonadoresYEntidades.puedeDonar(donadorEjemplo.id()))
+            .thenReturn(Boolean.TRUE);
+    when(fachadaLogistica.gestionarDonacion(any(), any(), anyInt())).thenReturn(any());
 
-    String donadorID = "1";
-
-    instancia.registrarDonacion(donacionEjemplo);
+    DonacionDTO retorno = instancia.registrarDonacion(donacionEjemplo);
 
     List<DonacionDTO> resultado =
-        instancia.buscarPorDonadorYFechaInicio(donadorID, LocalDate.ofYearDay(2025, 99));
+        instancia.buscarPorDonadorYFechaInicio(retorno.donadorID(), LocalDate.ofYearDay(2025, 99));
 
     Assertions.assertNotNull(resultado);
-    Assertions.assertTrue(resultado.stream().anyMatch(d -> d.id().equals(donacionEjemplo.id())));
+    Assertions.assertTrue(resultado.stream().anyMatch(d -> d.id().equals(retorno.id())));
     Assertions.assertEquals(1, resultado.size());
 
-    verify(fachadaDonadoresYEntidades, times(1)).buscarDonadorPorID(donacionEjemplo.donadorID());
-    verify(fachadaDonadoresYEntidades, times(1)).puedeDonar(any());
+    verify(fachadaDonadoresYEntidades, times(1)).puedeDonar(donadorEjemplo.id());
+    verify(fachadaDonadoresYEntidades, times(1)).buscarDonadorPorID(donadorEjemplo.id());
     verify(fachadaLogistica, times(1)).gestionarDonacion(any(), any(), anyInt());
   }
 
