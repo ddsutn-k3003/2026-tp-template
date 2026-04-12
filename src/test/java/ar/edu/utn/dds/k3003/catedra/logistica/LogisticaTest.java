@@ -182,7 +182,7 @@ public class LogisticaTest {
 
     Assertions.assertEquals(EstadoAsginacionEnum.COMPLETADA, instancia.buscarAsignacionPorPaqueteID(paqueteEjemplo.id()).estado());
 
-    verify(fachadaDonaciones, times(1)).cambiarEstadoDeDonacion(eq(paqueteEjemplo.donacionID()), EstadoDonacionEnum.ACEPTADA);
+    verify(fachadaDonaciones, times(1)).cambiarEstadoDeDonacion(paqueteEjemplo.donacionID(), EstadoDonacionEnum.ACEPTADA);
   }
 
   @Test
@@ -203,6 +203,6 @@ public class LogisticaTest {
           instancia.reportarEntrega(paqueteEjemplo);
         });
 
-    verify(fachadaDonaciones, times(1)).cambiarEstadoDeDonacion(eq(paqueteEjemplo.donacionID()), EstadoDonacionEnum.ACEPTADA);
+    verify(fachadaDonaciones, times(1)).cambiarEstadoDeDonacion(paqueteEjemplo.donacionID(), EstadoDonacionEnum.ACEPTADA);
   }
 }
