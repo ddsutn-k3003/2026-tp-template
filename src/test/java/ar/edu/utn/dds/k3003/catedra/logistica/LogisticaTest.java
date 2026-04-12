@@ -5,6 +5,8 @@ import static org.mockito.Mockito.*;
 
 import ar.edu.utn.dds.k3003.Fachada;
 import ar.edu.utn.dds.k3003.catedra.ClassFinder;
+import ar.edu.utn.dds.k3003.catedra.dtos.donaciones.DonacionDTO;
+import ar.edu.utn.dds.k3003.catedra.dtos.donaciones.EstadoDonacionEnum;
 import ar.edu.utn.dds.k3003.catedra.dtos.donadoresYEntidades.NecesidadMaterialDTO;
 import ar.edu.utn.dds.k3003.catedra.dtos.logistica.*;
 import ar.edu.utn.dds.k3003.catedra.fachadas.FachadaDonaciones;
@@ -172,13 +174,15 @@ public class LogisticaTest {
   @Test
   void testReportarEntrega() {
 
-    when(fachadaDonaciones.cambiarEstadoDeDonacion(paqueteEjemplo.donacionID(), any())).thenReturn(any());
+    when(fachadaDonaciones.cambiarEstadoDeDonacion(paqueteEjemplo.donacionID(), EstadoDonacionEnum.ACEPTADA))
+            .thenReturn(new DonacionDTO(paqueteEjemplo.donacionID(), "donador1", "deposito1",
+                    "descripcion1", paqueteEjemplo.producto(), paqueteEjemplo.cantidad(), EstadoDonacionEnum.ACEPTADA));
 
     instancia.reportarEntrega(paqueteEjemplo);
 
     Assertions.assertEquals(EstadoAsginacionEnum.COMPLETADA, instancia.buscarAsignacionPorPaqueteID(paqueteEjemplo.id()).estado());
 
-    verify(fachadaDonaciones, times(1)).cambiarEstadoDeDonacion(eq(paqueteEjemplo.donacionID()), any());
+    verify(fachadaDonaciones, times(1)).cambiarEstadoDeDonacion(eq(paqueteEjemplo.donacionID()), EstadoDonacionEnum.ACEPTADA);
   }
 
   @Test
@@ -190,7 +194,8 @@ public class LogisticaTest {
           instancia.reportarEntrega(null);
         });
 
-    when(fachadaDonaciones.cambiarEstadoDeDonacion(eq(paqueteEjemplo.donacionID()), any())).thenThrow(new RuntimeException());
+    when(fachadaDonaciones.cambiarEstadoDeDonacion(paqueteEjemplo.donacionID(), EstadoDonacionEnum.ACEPTADA))
+            .thenThrow(new RuntimeException());
 
     Assertions.assertThrows(
         RuntimeException.class,
@@ -198,6 +203,6 @@ public class LogisticaTest {
           instancia.reportarEntrega(paqueteEjemplo);
         });
 
-    verify(fachadaDonaciones, times(1)).cambiarEstadoDeDonacion(eq(paqueteEjemplo.donacionID()), any());
+    verify(fachadaDonaciones, times(1)).cambiarEstadoDeDonacion(eq(paqueteEjemplo.donacionID()), EstadoDonacionEnum.ACEPTADA);
   }
 }
