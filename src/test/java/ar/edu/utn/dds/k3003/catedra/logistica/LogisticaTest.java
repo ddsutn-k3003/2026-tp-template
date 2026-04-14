@@ -105,18 +105,24 @@ public class LogisticaTest {
   void testGestionarDonacion() {
 
     when(fachadaDonadoresYEntidades.obtenerNecesidadesInsatisfechasDe("producto1"))
-            .thenReturn(List.of(new NecesidadMaterialDTO("necesidad1", "entidad1", 5, "descripcion1", 5, "producto1")));
+        .thenReturn(
+            List.of(
+                new NecesidadMaterialDTO(
+                    "necesidad1", "entidad1", 5, "descripcion1", 5, "producto1")));
 
-    when(fachadaDonadoresYEntidades.satisfacerNecesidad("necesidad1",paqueteEjemplo.cantidad())).thenReturn(any());
+    when(fachadaDonadoresYEntidades.satisfacerNecesidad("necesidad1", paqueteEjemplo.cantidad()))
+        .thenReturn(any());
 
     DepositoDTO depositoRetorno = instancia.agregarDeposito(depositoEjemplo);
 
-    DepositoDTO actualizado = instancia.gestionarDonacion(depositoRetorno.id(), "producto1", 10);
+    DepositoDTO actualizado =
+        instancia.gestionarDonacion(depositoRetorno.id(), "donacion1", "producto1", 10);
 
     Assertions.assertNotNull(actualizado);
     Assertions.assertEquals(actualizado.id(), depositoRetorno.id());
 
-    verify(fachadaDonadoresYEntidades, times(1)).satisfacerNecesidad("necesidad1", paqueteEjemplo.cantidad());
+    verify(fachadaDonadoresYEntidades, times(1))
+        .satisfacerNecesidad("necesidad1", paqueteEjemplo.cantidad());
     verify(fachadaDonadoresYEntidades, times(1)).obtenerNecesidadesInsatisfechasDe("producto1");
   }
 
@@ -125,7 +131,7 @@ public class LogisticaTest {
     Assertions.assertThrows(
         RuntimeException.class,
         () -> {
-          instancia.gestionarDonacion("Inexistente", "producto1", 10);
+          instancia.gestionarDonacion("Inexistente", "donacion1", "producto1", 10);
         });
 
     DepositoDTO depositoRetorno = instancia.agregarDeposito(depositoEjemplo);
@@ -133,13 +139,13 @@ public class LogisticaTest {
     Assertions.assertThrows(
         RuntimeException.class,
         () -> {
-          instancia.gestionarDonacion(depositoRetorno.id(), "producto1", -1);
+          instancia.gestionarDonacion(depositoRetorno.id(), "donacion1", "producto1", -1);
         });
 
     Assertions.assertThrows(
         RuntimeException.class,
         () -> {
-          instancia.gestionarDonacion(depositoRetorno.id(), "producto1", 0);
+          instancia.gestionarDonacion(depositoRetorno.id(), "donacion1", "producto1", 0);
         });
   }
 
@@ -147,8 +153,8 @@ public class LogisticaTest {
   void testEjecutarMatchmaking() {
 
     List<NecesidadDeEntidadDTO> necesidades =
-        List.of(new NecesidadDeEntidadDTO("necesidad1", "entidad1", 5,
-                "descripcion1", 5, "producto1"));
+        List.of(
+            new NecesidadDeEntidadDTO("necesidad1", "entidad1", 5, "descripcion1", 5, "producto1"));
 
     AsignacionDTO asignacion = instancia.ejecutarMatchmaking(paqueteEjemplo, necesidades);
 
@@ -161,8 +167,8 @@ public class LogisticaTest {
   void testEjecutarMatchmakingFallido() {
 
     List<NecesidadDeEntidadDTO> necesidades =
-        List.of(new NecesidadDeEntidadDTO("necesidad1", "entidad1", 5,
-                "descripcion1", 5, "producto1"));
+        List.of(
+            new NecesidadDeEntidadDTO("necesidad1", "entidad1", 5, "descripcion1", 5, "producto1"));
 
     Assertions.assertThrows(
         RuntimeException.class,
@@ -174,15 +180,26 @@ public class LogisticaTest {
   @Test
   void testReportarEntrega() {
 
-    when(fachadaDonaciones.cambiarEstadoDeDonacion(paqueteEjemplo.donacionID(), EstadoDonacionEnum.ACEPTADA))
-            .thenReturn(new DonacionDTO(paqueteEjemplo.donacionID(), "donador1", "deposito1",
-                    "descripcion1", paqueteEjemplo.producto(), paqueteEjemplo.cantidad(), EstadoDonacionEnum.ACEPTADA));
+    when(fachadaDonaciones.cambiarEstadoDeDonacion(
+            paqueteEjemplo.donacionID(), EstadoDonacionEnum.ACEPTADA))
+        .thenReturn(
+            new DonacionDTO(
+                paqueteEjemplo.donacionID(),
+                "donador1",
+                "deposito1",
+                "descripcion1",
+                paqueteEjemplo.producto(),
+                paqueteEjemplo.cantidad(),
+                EstadoDonacionEnum.ACEPTADA));
 
     instancia.reportarEntrega(paqueteEjemplo);
 
-    Assertions.assertEquals(EstadoAsginacionEnum.COMPLETADA, instancia.buscarAsignacionPorPaqueteID(paqueteEjemplo.id()).estado());
+    Assertions.assertEquals(
+        EstadoAsginacionEnum.COMPLETADA,
+        instancia.buscarAsignacionPorPaqueteID(paqueteEjemplo.id()).estado());
 
-    verify(fachadaDonaciones, times(1)).cambiarEstadoDeDonacion(paqueteEjemplo.donacionID(), EstadoDonacionEnum.ACEPTADA);
+    verify(fachadaDonaciones, times(1))
+        .cambiarEstadoDeDonacion(paqueteEjemplo.donacionID(), EstadoDonacionEnum.ACEPTADA);
   }
 
   @Test
@@ -194,8 +211,9 @@ public class LogisticaTest {
           instancia.reportarEntrega(null);
         });
 
-    when(fachadaDonaciones.cambiarEstadoDeDonacion(paqueteEjemplo.donacionID(), EstadoDonacionEnum.ACEPTADA))
-            .thenThrow(new RuntimeException());
+    when(fachadaDonaciones.cambiarEstadoDeDonacion(
+            paqueteEjemplo.donacionID(), EstadoDonacionEnum.ACEPTADA))
+        .thenThrow(new RuntimeException());
 
     Assertions.assertThrows(
         RuntimeException.class,
@@ -203,6 +221,7 @@ public class LogisticaTest {
           instancia.reportarEntrega(paqueteEjemplo);
         });
 
-    verify(fachadaDonaciones, times(1)).cambiarEstadoDeDonacion(paqueteEjemplo.donacionID(), EstadoDonacionEnum.ACEPTADA);
+    verify(fachadaDonaciones, times(1))
+        .cambiarEstadoDeDonacion(paqueteEjemplo.donacionID(), EstadoDonacionEnum.ACEPTADA);
   }
 }

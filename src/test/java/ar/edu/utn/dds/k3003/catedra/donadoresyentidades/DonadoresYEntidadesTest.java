@@ -41,7 +41,16 @@ public class DonadoresYEntidadesTest {
     instancia.setFachadaIncentivos(fachadaIncentivos);
 
     donadorEjemplo =
-        new DonadorDTO(null, "donador1", "donador1", 5, "donador1", "donador1", "donador1", EstadoDonadorEnum.VERIFICADO, "donador1");
+        new DonadorDTO(
+            null,
+            "donador1",
+            "donador1",
+            5,
+            "donador1",
+            "donador1",
+            "donador1",
+            EstadoDonadorEnum.VERIFICADO,
+            "donador1");
     entidadEjemplo = new EntidadBeneficaDTO(null, "entidad1", "entidad1", "entidad1", "entidad1");
     necesidadEjemplo = new NecesidadMaterialDTO(null, "entidad1", 5, "necesidad1", 5, "producto1");
     quejaEjemplo = new QuejaDTO(null, "donacion1", "donador1", null, "queja1");
@@ -176,7 +185,8 @@ public class DonadoresYEntidadesTest {
 
     DonadorDTO donadorRetorno = instancia.agregarDonador(donadorEjemplo);
 
-    QuejaDTO quejaConDonadorID = new QuejaDTO(null, "donacion1", donadorRetorno.id(), null, "queja1");
+    QuejaDTO quejaConDonadorID =
+        new QuejaDTO(null, "donacion1", donadorRetorno.id(), null, "queja1");
 
     QuejaDTO retorno = instancia.agregarQueja(quejaConDonadorID);
 
@@ -276,7 +286,7 @@ public class DonadoresYEntidadesTest {
           instancia.modifcarCategoria("Inexistente", "Categoria1");
         });
 
-    DonadorDTO retorno =  instancia.agregarDonador(donadorEjemplo);
+    DonadorDTO retorno = instancia.agregarDonador(donadorEjemplo);
 
     Assertions.assertThrows(
         RuntimeException.class,
@@ -289,8 +299,7 @@ public class DonadoresYEntidadesTest {
   void testObtenerNecesidadesInsatisfechasDe() {
     NecesidadMaterialDTO retorno = instancia.registrarNecesidad(necesidadEjemplo);
 
-    List<NecesidadMaterialDTO> resultado =
-        instancia.obtenerNecesidadesInsatisfechasDe("producto1");
+    List<NecesidadMaterialDTO> resultado = instancia.obtenerNecesidadesInsatisfechasDe("producto1");
 
     Assertions.assertNotNull(resultado);
     Assertions.assertEquals(1, resultado.size());
@@ -326,9 +335,9 @@ public class DonadoresYEntidadesTest {
     DonadorDTO donadorConID = instancia.agregarDonador(donadorEjemplo);
 
     when(fachadaIncentivos.getInsigniasDeDonador(donadorConID.id()))
-            .thenReturn(List.of(new InsigniaDTO("insignia1", "insignia1", "insignia1")));
+        .thenReturn(List.of(new InsigniaDTO("insignia1", "insignia1", "insignia1")));
     when(fachadaIncentivos.getMisionEnCursoDeDonador(donadorConID.id()))
-            .thenReturn(new MisionDTO("mision1", "mision1", "insignia1", null, null));
+        .thenReturn(new MisionDTO("mision1", "mision1", "insignia1", null, null));
 
     DonadorStatsDTO retorno = instancia.estadisticasDonador(donadorConID.id());
 

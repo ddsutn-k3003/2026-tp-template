@@ -44,7 +44,16 @@ public class IncentivosTest {
     insigniaEjemplo = new InsigniaDTO(null, "insignia1", "descripcion1");
     misionEjemplo = new MisionDTO(null, "mision1", "insignia1", null, null);
     donadorEjemplo =
-        new DonadorDTO("donador1", "donador1", "donador1", 5, "donador1", "donador1", "donador1", EstadoDonadorEnum.VERIFICADO, "donador1");
+        new DonadorDTO(
+            "donador1",
+            "donador1",
+            "donador1",
+            5,
+            "donador1",
+            "donador1",
+            "donador1",
+            EstadoDonadorEnum.VERIFICADO,
+            "donador1");
   }
 
   static boolean condicion() {
@@ -146,7 +155,7 @@ public class IncentivosTest {
   @Test
   void testGetInsigniasDeDonadorInexistente() {
     when(fachadaDonadoresYEntidades.buscarDonadorPorID("Inexistente"))
-            .thenThrow(new DonadorNoEncontradoException("Donador Inexistente"));
+        .thenThrow(new DonadorNoEncontradoException("Donador Inexistente"));
 
     Assertions.assertThrows(
         RuntimeException.class,
@@ -160,7 +169,7 @@ public class IncentivosTest {
   @Test
   void testAsignarMisionEnCursoDeDonador() {
     when(fachadaDonadoresYEntidades.buscarDonadorPorID(donadorEjemplo.id()))
-            .thenReturn(donadorEjemplo);
+        .thenReturn(donadorEjemplo);
 
     MisionDTO misionRetorno = instancia.agregarMision(misionEjemplo);
     instancia.asignarMisionADonador(donadorEjemplo.id(), misionRetorno);
