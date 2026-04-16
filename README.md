@@ -1,13 +1,13 @@
 # 🧪 2026 - Trabajo Práctico Anual - Template
 
 ## 👤 Datos del Alumno
-- **Nombre:**  
-- **Apellido:**  
+- **Nombre:**
+- **Apellido:**
 
 ---
 
 ## 🧩 Componente Desarrollado
-- 
+-
 
 ---
 
@@ -46,7 +46,7 @@ git fetch template
 # Integrar los cambios a tu rama actual
 git merge template/main
 ```
-📌 **Nota:**  
+📌 **Nota:**
 A la hora de recibir actualizaciones, NO se pone la flag "--allow-unrelated-histories" en el merge.
 
 ---

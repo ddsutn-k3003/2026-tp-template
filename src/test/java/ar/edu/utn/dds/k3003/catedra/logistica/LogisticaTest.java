@@ -192,6 +192,9 @@ public class LogisticaTest {
                 paqueteEjemplo.cantidad(),
                 EstadoDonacionEnum.ACEPTADA));
 
+    //Van a necesitar que ejecutarMatchmaking guarde la asignacion en el repo.
+    AsignacionDTO asignacionDTO = instancia.ejecutarMatchmaking(paqueteEjemplo, List.of(necesidadDeEjemplo));
+
     instancia.reportarEntrega(paqueteEjemplo);
 
     Assertions.assertEquals(

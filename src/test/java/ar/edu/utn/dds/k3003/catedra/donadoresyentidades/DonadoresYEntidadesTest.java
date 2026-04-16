@@ -216,9 +216,9 @@ public class DonadoresYEntidadesTest {
   @Test
   void testPuedeDonar() {
 
-    instancia.agregarDonador(donadorEjemplo);
+    DonadorDTO retorno = instancia.agregarDonador(donadorEjemplo);
 
-    Boolean resultado = instancia.puedeDonar(donadorEjemplo.id());
+    Boolean resultado = instancia.puedeDonar(retorno.id());
 
     Assertions.assertTrue(resultado);
   }

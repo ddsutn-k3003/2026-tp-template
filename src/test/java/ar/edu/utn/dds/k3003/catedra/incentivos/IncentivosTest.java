@@ -154,16 +154,11 @@ public class IncentivosTest {
 
   @Test
   void testGetInsigniasDeDonadorInexistente() {
-    when(fachadaDonadoresYEntidades.buscarDonadorPorID("Inexistente"))
-        .thenThrow(new DonadorNoEncontradoException("Donador Inexistente"));
-
     Assertions.assertThrows(
         RuntimeException.class,
         () -> {
           instancia.getInsigniasDeDonador("Inexistente");
         });
-
-    verify(fachadaDonadoresYEntidades, times(1)).buscarDonadorPorID("Inexistente");
   }
 
   @Test
@@ -207,15 +202,10 @@ public class IncentivosTest {
 
   @Test
   void testGetMisionEnCursoDeDonadorFallido() {
-    when(fachadaDonadoresYEntidades.buscarDonadorPorID("Inexistente"))
-        .thenThrow(new DonadorNoEncontradoException("Donador Inexistente"));
-
     Assertions.assertThrows(
         RuntimeException.class,
         () -> {
           instancia.getMisionEnCursoDeDonador("Inexistente");
         });
-
-    verify(fachadaDonadoresYEntidades, times(1)).buscarDonadorPorID("Inexistente");
   }
 }
