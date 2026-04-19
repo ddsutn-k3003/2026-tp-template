@@ -4,8 +4,7 @@ import static org.mockito.Mockito.*;
 
 import ar.edu.utn.dds.k3003.Fachada;
 import ar.edu.utn.dds.k3003.catedra.ClassFinder;
-import ar.edu.utn.dds.k3003.catedra.dtos.donaciones.DonacionDTO;
-import ar.edu.utn.dds.k3003.catedra.dtos.donaciones.EstadoDonacionEnum;
+import ar.edu.utn.dds.k3003.catedra.dtos.donaciones.*;
 import ar.edu.utn.dds.k3003.catedra.dtos.donadoresYEntidades.DonadorDTO;
 import ar.edu.utn.dds.k3003.catedra.dtos.donadoresYEntidades.QuejaDTO;
 import ar.edu.utn.dds.k3003.catedra.dtos.logistica.DepositoDTO;
@@ -46,13 +45,20 @@ public class DonacionesTest {
     instancia.setFachadaDonadoresYEntidades(fachadaDonadoresYEntidades);
     instancia.setFachadaLogistica(fachadaLogistica);
 
+    IdentificadorDTO identificadorDTO = instancia.agregarIdentificador(
+            new IdentificadorDTO(null, TipoIdentificadorEnum.CODIGODEBARRAS, "codigoDeBarras"));
+
+    ProductoDTO productoRetorno = instancia.agregarProducto(
+            new ProductoDTO(null, "producto", "remera roja con rayas blancas",
+                    null, identificadorDTO.id()));
+
     donacionEjemplo =
         new DonacionDTO(
             null,
             "donador1",
             "deposito1",
             "descripcion1",
-            "producto1",
+            productoRetorno.id(),
             5,
             EstadoDonacionEnum.INGRESADA);
     donacionAceptadaEjemplo =
@@ -61,8 +67,8 @@ public class DonacionesTest {
             "donador1",
             "deposito1",
             "descripcion1",
-            "producto1",
-            5,
+                productoRetorno.id(),
+                5,
             EstadoDonacionEnum.ACEPTADA);
     donadorEjemplo =
         new DonadorDTO(

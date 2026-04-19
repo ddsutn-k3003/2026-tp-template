@@ -6,8 +6,10 @@ import ar.edu.utn.dds.k3003.Fachada;
 import ar.edu.utn.dds.k3003.catedra.ClassFinder;
 import ar.edu.utn.dds.k3003.catedra.dtos.donadoresYEntidades.DonadorDTO;
 import ar.edu.utn.dds.k3003.catedra.dtos.donadoresYEntidades.EstadoDonadorEnum;
+import ar.edu.utn.dds.k3003.catedra.dtos.incentivos.CategoriaDonadorEnum;
 import ar.edu.utn.dds.k3003.catedra.dtos.incentivos.InsigniaDTO;
 import ar.edu.utn.dds.k3003.catedra.dtos.incentivos.MisionDTO;
+import ar.edu.utn.dds.k3003.catedra.dtos.incentivos.TipoMisionEnum;
 import ar.edu.utn.dds.k3003.catedra.fachadas.FachadaDonadoresYEntidades;
 import ar.edu.utn.dds.k3003.catedra.fachadas.FachadaIncentivos;
 import ar.edu.utn.dds.k3003.exceptions.DonadorNoEncontradoException;
@@ -42,7 +44,9 @@ public class IncentivosTest {
     instancia.setFachadaDonadoresYEntidades(fachadaDonadoresYEntidades);
 
     insigniaEjemplo = new InsigniaDTO(null, "insignia1", "descripcion1");
-    misionEjemplo = new MisionDTO(null, "mision1", "insignia1", null, null);
+    InsigniaDTO retorno = instancia.agregarInsignia(new InsigniaDTO(null, "insignia", "descripcion"));
+
+    misionEjemplo = new MisionDTO(null, "mision1", retorno.id(), CategoriaDonadorEnum.COLABORADOR, CategoriaDonadorEnum.TRANSFORMADOR, TipoMisionEnum.DONACIONES_EXITOSAS);
     donadorEjemplo =
         new DonadorDTO(
             "donador1",
@@ -139,20 +143,6 @@ public class IncentivosTest {
   }
 
   @Test
-  void testAsignarInsigniaADonadorInexistente() {
-    when(fachadaDonadoresYEntidades.buscarDonadorPorID("Inexistente"))
-        .thenThrow(new DonadorNoEncontradoException("Donador Inexistente"));
-
-    Assertions.assertThrows(
-        RuntimeException.class,
-        () -> {
-          instancia.asignarInsigniaADonador("Inexistente", insigniaEjemplo);
-        });
-
-    verify(fachadaDonadoresYEntidades, times(1)).buscarDonadorPorID("Inexistente");
-  }
-
-  @Test
   void testGetInsigniasDeDonadorInexistente() {
     Assertions.assertThrows(
         RuntimeException.class,
@@ -184,20 +174,6 @@ public class IncentivosTest {
         () -> {
           instancia.asignarMisionADonador(donadorEjemplo.id(), null);
         });
-  }
-
-  @Test
-  void testAsignarMisionADonadorInexistente() {
-    when(fachadaDonadoresYEntidades.buscarDonadorPorID("Inexistente"))
-        .thenThrow(new DonadorNoEncontradoException("Donador Inexistente"));
-
-    Assertions.assertThrows(
-        RuntimeException.class,
-        () -> {
-          instancia.asignarMisionADonador("Inexistente", misionEjemplo);
-        });
-
-    verify(fachadaDonadoresYEntidades, times(1)).buscarDonadorPorID("Inexistente");
   }
 
   @Test

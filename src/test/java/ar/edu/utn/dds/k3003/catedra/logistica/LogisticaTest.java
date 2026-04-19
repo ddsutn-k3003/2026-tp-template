@@ -8,6 +8,7 @@ import ar.edu.utn.dds.k3003.catedra.ClassFinder;
 import ar.edu.utn.dds.k3003.catedra.dtos.donaciones.DonacionDTO;
 import ar.edu.utn.dds.k3003.catedra.dtos.donaciones.EstadoDonacionEnum;
 import ar.edu.utn.dds.k3003.catedra.dtos.donadoresYEntidades.NecesidadMaterialDTO;
+import ar.edu.utn.dds.k3003.catedra.dtos.donadoresYEntidades.TipoNecesidadMaterialEnum;
 import ar.edu.utn.dds.k3003.catedra.dtos.logistica.*;
 import ar.edu.utn.dds.k3003.catedra.fachadas.FachadaDonaciones;
 import ar.edu.utn.dds.k3003.catedra.fachadas.FachadaDonadoresYEntidades;
@@ -31,7 +32,7 @@ public class LogisticaTest {
   @Mock FachadaDonaciones fachadaDonaciones;
 
   DepositoDTO depositoEjemplo;
-  NecesidadDeEntidadDTO necesidadDeEjemplo;
+  NecesidadMaterialDTO necesidadDeEjemplo;
   PaqueteDTO paqueteEjemplo;
 
   @SneakyThrows
@@ -40,14 +41,13 @@ public class LogisticaTest {
 
     var clazz = ClassFinder.findClass();
     instancia = (FachadaLogistica) clazz.getDeclaredConstructor().newInstance();
-    instancia.setAlgoritmoMM();
 
     instancia.setFachadaDonadoresYEntidades(fachadaDonadoresYEntidades);
     instancia.setFachadaDonaciones(fachadaDonaciones);
 
     depositoEjemplo = new DepositoDTO(null, "deposito1", "direccion1", 1000, null);
     necesidadDeEjemplo =
-        new NecesidadDeEntidadDTO(null, "entidad1", 5, "descripcion1", 10, "producto1");
+        new NecesidadMaterialDTO(null, "entidad1", 5, "descripcion1", 10, "producto1", TipoNecesidadMaterialEnum.EXTRAORDINARIA);
     paqueteEjemplo = new PaqueteDTO("paquete1", "donacion1", "producto1", 10);
   }
 
@@ -60,6 +60,7 @@ public class LogisticaTest {
   void testAgregarDeposito() {
 
     DepositoDTO retorno = instancia.agregarDeposito(depositoEjemplo);
+    instancia.setAlgoritmoMM(retorno.id(), TipoAlgoritmoEnum.SUB_ATENDIDOS);
 
     Assertions.assertNotNull(retorno.id());
     Assertions.assertEquals(retorno.nombre(), depositoEjemplo.nombre());
@@ -74,6 +75,7 @@ public class LogisticaTest {
         });
 
     DepositoDTO retorno = instancia.agregarDeposito(depositoEjemplo);
+    instancia.setAlgoritmoMM(retorno.id(), TipoAlgoritmoEnum.SUB_ATENDIDOS);
 
     Assertions.assertThrows(
         RuntimeException.class,
@@ -85,6 +87,7 @@ public class LogisticaTest {
   @Test
   void testBuscarDepositoPorID() {
     DepositoDTO retorno = instancia.agregarDeposito(depositoEjemplo);
+    instancia.setAlgoritmoMM(retorno.id(), TipoAlgoritmoEnum.SUB_ATENDIDOS);
 
     DepositoDTO buscado = instancia.buscarDepositoPorID(retorno.id());
 
@@ -108,12 +111,13 @@ public class LogisticaTest {
         .thenReturn(
             List.of(
                 new NecesidadMaterialDTO(
-                    "necesidad1", "entidad1", 5, "descripcion1", 5, "producto1")));
+                    "necesidad1", "entidad1", 5, "descripcion1", 5, "producto1", TipoNecesidadMaterialEnum.EXTRAORDINARIA)));
 
     when(fachadaDonadoresYEntidades.satisfacerNecesidad("necesidad1", paqueteEjemplo.cantidad()))
         .thenReturn(any());
 
     DepositoDTO depositoRetorno = instancia.agregarDeposito(depositoEjemplo);
+    instancia.setAlgoritmoMM(depositoRetorno.id(), TipoAlgoritmoEnum.SUB_ATENDIDOS);
 
     DepositoDTO actualizado =
         instancia.gestionarDonacion(depositoRetorno.id(), "donacion1", "producto1", 10);
@@ -135,6 +139,7 @@ public class LogisticaTest {
         });
 
     DepositoDTO depositoRetorno = instancia.agregarDeposito(depositoEjemplo);
+    instancia.setAlgoritmoMM(depositoRetorno.id(), TipoAlgoritmoEnum.SUB_ATENDIDOS);
 
     Assertions.assertThrows(
         RuntimeException.class,
@@ -152,11 +157,14 @@ public class LogisticaTest {
   @Test
   void testEjecutarMatchmaking() {
 
-    List<NecesidadDeEntidadDTO> necesidades =
+    List<NecesidadMaterialDTO> necesidades =
         List.of(
-            new NecesidadDeEntidadDTO("necesidad1", "entidad1", 5, "descripcion1", 5, "producto1"));
+            new NecesidadMaterialDTO("necesidad1", "entidad1", 5, "descripcion1", 5, "producto1", TipoNecesidadMaterialEnum.EXTRAORDINARIA));
 
-    AsignacionDTO asignacion = instancia.ejecutarMatchmaking(paqueteEjemplo, necesidades);
+    DepositoDTO depositoRetorno = instancia.agregarDeposito(depositoEjemplo);
+    instancia.setAlgoritmoMM(depositoRetorno.id(), TipoAlgoritmoEnum.SUB_ATENDIDOS);
+
+    AsignacionDTO asignacion = instancia.ejecutarMatchmaking(depositoRetorno.id(), paqueteEjemplo, necesidades);
 
     Assertions.assertNotNull(asignacion);
     Assertions.assertEquals(paqueteEjemplo.id(), asignacion.paqueteID());
@@ -166,14 +174,14 @@ public class LogisticaTest {
   @Test
   void testEjecutarMatchmakingFallido() {
 
-    List<NecesidadDeEntidadDTO> necesidades =
+    List<NecesidadMaterialDTO> necesidades =
         List.of(
-            new NecesidadDeEntidadDTO("necesidad1", "entidad1", 5, "descripcion1", 5, "producto1"));
+            new NecesidadMaterialDTO("necesidad1", "entidad1", 5, "descripcion1", 5, "producto1", TipoNecesidadMaterialEnum.EXTRAORDINARIA));
 
     Assertions.assertThrows(
         RuntimeException.class,
         () -> {
-          instancia.ejecutarMatchmaking(null, necesidades);
+          instancia.ejecutarMatchmaking(null, null, necesidades);
         });
   }
 
@@ -192,8 +200,10 @@ public class LogisticaTest {
                 paqueteEjemplo.cantidad(),
                 EstadoDonacionEnum.ACEPTADA));
 
-    //Van a necesitar que ejecutarMatchmaking guarde la asignacion en el repo.
-    AsignacionDTO asignacionDTO = instancia.ejecutarMatchmaking(paqueteEjemplo, List.of(necesidadDeEjemplo));
+    DepositoDTO depositoRetorno = instancia.agregarDeposito(depositoEjemplo);
+    instancia.setAlgoritmoMM(depositoRetorno.id(), TipoAlgoritmoEnum.SUB_ATENDIDOS);
+
+    AsignacionDTO asignacionDTO = instancia.ejecutarMatchmaking(depositoRetorno.id(), paqueteEjemplo, List.of(necesidadDeEjemplo));
 
     instancia.reportarEntrega(paqueteEjemplo);
 
@@ -217,6 +227,11 @@ public class LogisticaTest {
     when(fachadaDonaciones.cambiarEstadoDeDonacion(
             paqueteEjemplo.donacionID(), EstadoDonacionEnum.ACEPTADA))
         .thenThrow(new RuntimeException());
+
+    DepositoDTO depositoRetorno = instancia.agregarDeposito(depositoEjemplo);
+    instancia.setAlgoritmoMM(depositoRetorno.id(), TipoAlgoritmoEnum.SUB_ATENDIDOS);
+
+    AsignacionDTO asignacionDTO = instancia.ejecutarMatchmaking(depositoRetorno.id(), paqueteEjemplo, List.of(necesidadDeEjemplo));
 
     Assertions.assertThrows(
         RuntimeException.class,

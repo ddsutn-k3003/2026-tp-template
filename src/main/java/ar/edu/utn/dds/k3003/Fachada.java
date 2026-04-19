@@ -99,6 +99,12 @@ public class Fachada implements FachadaDonadoresYEntidades {
   }
 
   @Override
+  public List<NecesidadMaterialDTO> obtenerNecesidadesInsatisfechasDe(String productoSolicitadoID) {
+    // A implementar por el alumno
+    return List.of();
+  }
+
+  @Override
   public List<QuejaDTO> obtenerQuejasDe(String donadorID) throws NoSuchElementException {
     // A implementar por el alumno
     return List.of();
@@ -138,12 +144,5 @@ public class Fachada implements FachadaDonadoresYEntidades {
   public QuejaDTO agregarQueja(QuejaDTO quejaDTO) throws NoSuchElementException {
     // A implementar por el alumno
     return null;
-  }
-
-  @Override
-  public List<NecesidadMaterialDTO> obtenerNecesidadesInsatisfechasDe(
-      ProductoSolicitadoDTO productoSolicitado) {
-    // A implementar por el alumno
-    return List.of();
   }
 }
