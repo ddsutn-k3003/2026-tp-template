@@ -11,7 +11,9 @@ import ar.edu.utn.dds.k3003.repositories.InMemoryDonadoresRepo;
 import java.util.List;
 import java.util.NoSuchElementException;
 import lombok.val;
+import org.springframework.stereotype.Service;
 
+@Service
 public class Fachada implements FachadaDonadoresYEntidades {
 
   private DonadoresRepository donadoresRepository;
