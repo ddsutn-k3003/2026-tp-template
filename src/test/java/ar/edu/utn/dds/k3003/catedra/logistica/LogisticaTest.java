@@ -1,6 +1,5 @@
 package ar.edu.utn.dds.k3003.catedra.logistica;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 import ar.edu.utn.dds.k3003.Fachada;
@@ -45,9 +44,7 @@ public class LogisticaTest {
     instancia.setFachadaDonadoresYEntidades(fachadaDonadoresYEntidades);
     instancia.setFachadaDonaciones(fachadaDonaciones);
 
-    depositoEjemplo =
-        new DepositoDTO(
-            null, TipoAlgoritmoEnum.SUB_ATENDIDOS, "deposito1", "direccion1", 1000, null);
+    depositoEjemplo = new DepositoDTO(null, null, "deposito1", "direccion1", 1000, null);
     necesidadDeEjemplo =
         new NecesidadMaterialDTO(
             null,
@@ -128,9 +125,6 @@ public class LogisticaTest {
                     "producto1",
                     TipoNecesidadMaterialEnum.EXTRAORDINARIA)));
 
-    when(fachadaDonadoresYEntidades.satisfacerNecesidad("necesidad1", paqueteEjemplo.cantidad()))
-        .thenReturn(any());
-
     DepositoDTO depositoRetorno = instancia.agregarDeposito(depositoEjemplo);
     instancia.setAlgoritmoMM(depositoRetorno.id(), TipoAlgoritmoEnum.SUB_ATENDIDOS);
 
@@ -140,8 +134,6 @@ public class LogisticaTest {
     Assertions.assertNotNull(actualizado);
     Assertions.assertEquals(actualizado.id(), depositoRetorno.id());
 
-    verify(fachadaDonadoresYEntidades, times(1))
-        .satisfacerNecesidad("necesidad1", paqueteEjemplo.cantidad());
     verify(fachadaDonadoresYEntidades, times(1)).obtenerNecesidadesInsatisfechasDe("producto1");
   }
 
@@ -229,6 +221,8 @@ public class LogisticaTest {
                 paqueteEjemplo.producto(),
                 paqueteEjemplo.cantidad(),
                 EstadoDonacionEnum.ACEPTADA));
+    when(fachadaDonadoresYEntidades.satisfacerNecesidad("necesidad1", paqueteEjemplo.cantidad()))
+        .thenReturn(necesidadDeEjemplo);
 
     DepositoDTO depositoRetorno = instancia.agregarDeposito(depositoEjemplo);
     instancia.setAlgoritmoMM(depositoRetorno.id(), TipoAlgoritmoEnum.SUB_ATENDIDOS);
@@ -243,6 +237,8 @@ public class LogisticaTest {
         EstadoAsginacionEnum.COMPLETADA,
         instancia.buscarAsignacionPorPaqueteID(paqueteEjemplo.id()).estado());
 
+    verify(fachadaDonadoresYEntidades, times(1))
+        .satisfacerNecesidad("necesidad1", paqueteEjemplo.cantidad());
     verify(fachadaDonaciones, times(1))
         .cambiarEstadoDeDonacion(paqueteEjemplo.donacionID(), EstadoDonacionEnum.ACEPTADA);
   }
@@ -259,6 +255,8 @@ public class LogisticaTest {
     when(fachadaDonaciones.cambiarEstadoDeDonacion(
             paqueteEjemplo.donacionID(), EstadoDonacionEnum.ACEPTADA))
         .thenThrow(new RuntimeException());
+    when(fachadaDonadoresYEntidades.satisfacerNecesidad("necesidad1", paqueteEjemplo.cantidad()))
+        .thenReturn(necesidadDeEjemplo);
 
     DepositoDTO depositoRetorno = instancia.agregarDeposito(depositoEjemplo);
     instancia.setAlgoritmoMM(depositoRetorno.id(), TipoAlgoritmoEnum.SUB_ATENDIDOS);
@@ -273,6 +271,8 @@ public class LogisticaTest {
           instancia.reportarEntrega(paqueteEjemplo);
         });
 
+    verify(fachadaDonadoresYEntidades, times(1))
+        .satisfacerNecesidad("necesidad1", paqueteEjemplo.cantidad());
     verify(fachadaDonaciones, times(1))
         .cambiarEstadoDeDonacion(paqueteEjemplo.donacionID(), EstadoDonacionEnum.ACEPTADA);
   }
