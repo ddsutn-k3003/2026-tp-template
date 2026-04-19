@@ -45,12 +45,14 @@ public class DonacionesTest {
     instancia.setFachadaDonadoresYEntidades(fachadaDonadoresYEntidades);
     instancia.setFachadaLogistica(fachadaLogistica);
 
-    IdentificadorDTO identificadorDTO = instancia.agregarIdentificador(
+    IdentificadorDTO identificadorDTO =
+        instancia.agregarIdentificador(
             new IdentificadorDTO(null, TipoIdentificadorEnum.CODIGODEBARRAS, "codigoDeBarras"));
 
-    ProductoDTO productoRetorno = instancia.agregarProducto(
-            new ProductoDTO(null, "producto", "remera roja con rayas blancas",
-                    null, identificadorDTO.id()));
+    ProductoDTO productoRetorno =
+        instancia.agregarProducto(
+            new ProductoDTO(
+                null, "producto", "remera roja con rayas blancas", null, identificadorDTO.id()));
 
     donacionEjemplo =
         new DonacionDTO(
@@ -67,8 +69,8 @@ public class DonacionesTest {
             "donador1",
             "deposito1",
             "descripcion1",
-                productoRetorno.id(),
-                5,
+            productoRetorno.id(),
+            5,
             EstadoDonacionEnum.ACEPTADA);
     donadorEjemplo =
         new DonadorDTO(

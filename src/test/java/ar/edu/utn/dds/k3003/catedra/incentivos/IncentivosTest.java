@@ -12,7 +12,6 @@ import ar.edu.utn.dds.k3003.catedra.dtos.incentivos.MisionDTO;
 import ar.edu.utn.dds.k3003.catedra.dtos.incentivos.TipoMisionEnum;
 import ar.edu.utn.dds.k3003.catedra.fachadas.FachadaDonadoresYEntidades;
 import ar.edu.utn.dds.k3003.catedra.fachadas.FachadaIncentivos;
-import ar.edu.utn.dds.k3003.exceptions.DonadorNoEncontradoException;
 import java.util.List;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Assertions;
@@ -44,9 +43,17 @@ public class IncentivosTest {
     instancia.setFachadaDonadoresYEntidades(fachadaDonadoresYEntidades);
 
     insigniaEjemplo = new InsigniaDTO(null, "insignia1", "descripcion1");
-    InsigniaDTO retorno = instancia.agregarInsignia(new InsigniaDTO(null, "insignia", "descripcion"));
+    InsigniaDTO retorno =
+        instancia.agregarInsignia(new InsigniaDTO(null, "insignia", "descripcion"));
 
-    misionEjemplo = new MisionDTO(null, "mision1", retorno.id(), CategoriaDonadorEnum.COLABORADOR, CategoriaDonadorEnum.TRANSFORMADOR, TipoMisionEnum.DONACIONES_EXITOSAS);
+    misionEjemplo =
+        new MisionDTO(
+            null,
+            "mision1",
+            retorno.id(),
+            CategoriaDonadorEnum.COLABORADOR,
+            CategoriaDonadorEnum.TRANSFORMADOR,
+            TipoMisionEnum.DONACIONES_EXITOSAS);
     donadorEjemplo =
         new DonadorDTO(
             "donador1",

@@ -51,7 +51,15 @@ public class DonadoresYEntidadesTest {
             EstadoDonadorEnum.VERIFICADO,
             "donador1");
     entidadEjemplo = new EntidadBeneficaDTO(null, "entidad1", "entidad1", "entidad1", "entidad1");
-    necesidadEjemplo = new NecesidadMaterialDTO(null, "entidad1", 5, "necesidad1", 5, "producto1", TipoNecesidadMaterialEnum.EXTRAORDINARIA);
+    necesidadEjemplo =
+        new NecesidadMaterialDTO(
+            null,
+            "entidad1",
+            5,
+            "necesidad1",
+            5,
+            "producto1",
+            TipoNecesidadMaterialEnum.EXTRAORDINARIA);
   }
 
   static boolean condicion() {
@@ -154,14 +162,22 @@ public class DonadoresYEntidadesTest {
 
     EntidadBeneficaDTO entidadRetorno = instancia.agregarEntidad(entidadEjemplo);
 
-    NecesidadMaterialDTO necesidadConEntidad = new NecesidadMaterialDTO(null, entidadRetorno.id(), 5, "necesidad1", 5, "producto1", TipoNecesidadMaterialEnum.EXTRAORDINARIA);
+    NecesidadMaterialDTO necesidadConEntidad =
+        new NecesidadMaterialDTO(
+            null,
+            entidadRetorno.id(),
+            5,
+            "necesidad1",
+            5,
+            "producto1",
+            TipoNecesidadMaterialEnum.EXTRAORDINARIA);
 
     NecesidadMaterialDTO retorno = instancia.registrarNecesidad(necesidadConEntidad);
 
     Assertions.assertNotNull(retorno.id());
     Assertions.assertEquals(necesidadConEntidad.entidadID(), retorno.entidadID());
     Assertions.assertEquals(
-            necesidadConEntidad.productoSolicitadoID(), retorno.productoSolicitadoID());
+        necesidadConEntidad.productoSolicitadoID(), retorno.productoSolicitadoID());
     Assertions.assertEquals(necesidadConEntidad.cantidadObjetivo(), retorno.cantidadObjetivo());
   }
 
@@ -174,7 +190,15 @@ public class DonadoresYEntidadesTest {
         });
 
     EntidadBeneficaDTO entidadRetorno = instancia.agregarEntidad(entidadEjemplo);
-    NecesidadMaterialDTO necesidadConEntidad = new NecesidadMaterialDTO(null, entidadRetorno.id(), 5, "necesidad1", 5, "producto1", TipoNecesidadMaterialEnum.EXTRAORDINARIA);
+    NecesidadMaterialDTO necesidadConEntidad =
+        new NecesidadMaterialDTO(
+            null,
+            entidadRetorno.id(),
+            5,
+            "necesidad1",
+            5,
+            "producto1",
+            TipoNecesidadMaterialEnum.EXTRAORDINARIA);
     NecesidadMaterialDTO retorno = instancia.registrarNecesidad(necesidadConEntidad);
 
     Assertions.assertThrows(
@@ -211,7 +235,7 @@ public class DonadoresYEntidadesTest {
     DonadorDTO donadorRetorno = instancia.agregarDonador(donadorEjemplo);
 
     QuejaDTO quejaConDonadorID =
-            new QuejaDTO(null, "donacion1", donadorRetorno.id(), null, "queja1");
+        new QuejaDTO(null, "donacion1", donadorRetorno.id(), null, "queja1");
 
     QuejaDTO retorno = instancia.agregarQueja(quejaConDonadorID);
 
@@ -308,7 +332,15 @@ public class DonadoresYEntidadesTest {
   void testObtenerNecesidadesInsatisfechasDe() {
 
     EntidadBeneficaDTO entidadRetorno = instancia.agregarEntidad(entidadEjemplo);
-    NecesidadMaterialDTO necesidadConEntidad = new NecesidadMaterialDTO(null, entidadRetorno.id(), 5, "necesidad1", 5, "producto1", TipoNecesidadMaterialEnum.EXTRAORDINARIA);
+    NecesidadMaterialDTO necesidadConEntidad =
+        new NecesidadMaterialDTO(
+            null,
+            entidadRetorno.id(),
+            5,
+            "necesidad1",
+            5,
+            "producto1",
+            TipoNecesidadMaterialEnum.EXTRAORDINARIA);
     NecesidadMaterialDTO retorno = instancia.registrarNecesidad(necesidadConEntidad);
 
     List<NecesidadMaterialDTO> resultado = instancia.obtenerNecesidadesInsatisfechasDe("producto1");
@@ -327,7 +359,15 @@ public class DonadoresYEntidadesTest {
         });
 
     EntidadBeneficaDTO entidadRetorno = instancia.agregarEntidad(entidadEjemplo);
-    NecesidadMaterialDTO necesidadConEntidad = new NecesidadMaterialDTO(null, entidadRetorno.id(), 5, "necesidad1", 5, "producto1", TipoNecesidadMaterialEnum.EXTRAORDINARIA);
+    NecesidadMaterialDTO necesidadConEntidad =
+        new NecesidadMaterialDTO(
+            null,
+            entidadRetorno.id(),
+            5,
+            "necesidad1",
+            5,
+            "producto1",
+            TipoNecesidadMaterialEnum.EXTRAORDINARIA);
     NecesidadMaterialDTO retorno = instancia.registrarNecesidad(necesidadConEntidad);
 
     Assertions.assertThrows(
